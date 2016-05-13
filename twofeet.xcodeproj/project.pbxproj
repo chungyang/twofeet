@@ -9,23 +9,26 @@
 /* Begin PBXBuildFile section */
 		0A4F883B1CE5A9800033B9A6 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A4F883A1CE5A9800033B9A6 /* AppDelegate.swift */; };
 		0A4F883D1CE5A9800033B9A6 /* RootViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A4F883C1CE5A9800033B9A6 /* RootViewController.swift */; };
-		0A4F883F1CE5A9800033B9A6 /* DataViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A4F883E1CE5A9800033B9A6 /* DataViewController.swift */; };
-		0A4F88411CE5A9800033B9A6 /* ModelController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A4F88401CE5A9800033B9A6 /* ModelController.swift */; };
 		0A4F88441CE5A9800033B9A6 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 0A4F88421CE5A9800033B9A6 /* Main.storyboard */; };
 		0A4F88461CE5A9800033B9A6 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 0A4F88451CE5A9800033B9A6 /* Assets.xcassets */; };
 		0A4F88491CE5A9800033B9A6 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 0A4F88471CE5A9800033B9A6 /* LaunchScreen.storyboard */; };
+		0A4F88571CE5ABDE0033B9A6 /* opencv2.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0A4F88561CE5ABDE0033B9A6 /* opencv2.framework */; };
+		0A4F885B1CE5B50C0033B9A6 /* UIImage+OpenCV.mm in Sources */ = {isa = PBXBuildFile; fileRef = 0A4F885A1CE5B50C0033B9A6 /* UIImage+OpenCV.mm */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		0A4F88371CE5A9800033B9A6 /* twofeet.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = twofeet.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		0A4F883A1CE5A9800033B9A6 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		0A4F883C1CE5A9800033B9A6 /* RootViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RootViewController.swift; sourceTree = "<group>"; };
-		0A4F883E1CE5A9800033B9A6 /* DataViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataViewController.swift; sourceTree = "<group>"; };
-		0A4F88401CE5A9800033B9A6 /* ModelController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModelController.swift; sourceTree = "<group>"; };
 		0A4F88431CE5A9800033B9A6 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		0A4F88451CE5A9800033B9A6 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		0A4F88481CE5A9800033B9A6 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		0A4F884A1CE5A9800033B9A6 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		0A4F88551CE5AA850033B9A6 /* PrefixHeader.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PrefixHeader.pch; path = ../../../Desktop/PrefixHeader.pch; sourceTree = "<group>"; };
+		0A4F88561CE5ABDE0033B9A6 /* opencv2.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = opencv2.framework; path = ../../opencv/ios/opencv2.framework; sourceTree = "<group>"; };
+		0A4F88581CE5B50C0033B9A6 /* twofeet-Bridging-Header.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "twofeet-Bridging-Header.h"; sourceTree = "<group>"; };
+		0A4F88591CE5B50C0033B9A6 /* UIImage+OpenCV.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIImage+OpenCV.h"; sourceTree = "<group>"; };
+		0A4F885A1CE5B50C0033B9A6 /* UIImage+OpenCV.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = "UIImage+OpenCV.mm"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -33,6 +36,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				0A4F88571CE5ABDE0033B9A6 /* opencv2.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -42,6 +46,7 @@
 		0A4F882E1CE5A9800033B9A6 = {
 			isa = PBXGroup;
 			children = (
+				0A4F88521CE5AA420033B9A6 /* Frameworks */,
 				0A4F88391CE5A9800033B9A6 /* twofeet */,
 				0A4F88381CE5A9800033B9A6 /* Products */,
 			);
@@ -58,16 +63,26 @@
 		0A4F88391CE5A9800033B9A6 /* twofeet */ = {
 			isa = PBXGroup;
 			children = (
+				0A4F88581CE5B50C0033B9A6 /* twofeet-Bridging-Header.h */,
+				0A4F88591CE5B50C0033B9A6 /* UIImage+OpenCV.h */,
+				0A4F885A1CE5B50C0033B9A6 /* UIImage+OpenCV.mm */,
+				0A4F88551CE5AA850033B9A6 /* PrefixHeader.pch */,
 				0A4F883A1CE5A9800033B9A6 /* AppDelegate.swift */,
 				0A4F883C1CE5A9800033B9A6 /* RootViewController.swift */,
-				0A4F883E1CE5A9800033B9A6 /* DataViewController.swift */,
-				0A4F88401CE5A9800033B9A6 /* ModelController.swift */,
 				0A4F88421CE5A9800033B9A6 /* Main.storyboard */,
 				0A4F88451CE5A9800033B9A6 /* Assets.xcassets */,
 				0A4F88471CE5A9800033B9A6 /* LaunchScreen.storyboard */,
 				0A4F884A1CE5A9800033B9A6 /* Info.plist */,
 			);
 			path = twofeet;
+			sourceTree = "<group>";
+		};
+		0A4F88521CE5AA420033B9A6 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				0A4F88561CE5ABDE0033B9A6 /* opencv2.framework */,
+			);
+			name = Frameworks;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -102,6 +117,7 @@
 				TargetAttributes = {
 					0A4F88361CE5A9800033B9A6 = {
 						CreatedOnToolsVersion = 7.3.1;
+						DevelopmentTeam = HR28HTH5CS;
 					};
 				};
 			};
@@ -142,8 +158,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				0A4F883D1CE5A9800033B9A6 /* RootViewController.swift in Sources */,
-				0A4F88411CE5A9800033B9A6 /* ModelController.swift in Sources */,
-				0A4F883F1CE5A9800033B9A6 /* DataViewController.swift in Sources */,
+				0A4F885B1CE5B50C0033B9A6 /* UIImage+OpenCV.mm in Sources */,
 				0A4F883B1CE5A9800033B9A6 /* AppDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -257,10 +272,19 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				FRAMEWORK_SEARCH_PATHS = "/Users/chungyang/opencv/ios/**";
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = twofeet/PrefixHeader.pch;
 				INFOPLIST_FILE = twofeet/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.2;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.twofeet;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE = "";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 			};
 			name = Debug;
 		};
@@ -268,10 +292,18 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				FRAMEWORK_SEARCH_PATHS = "/Users/chungyang/opencv/ios/**";
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = twofeet/PrefixHeader.pch;
 				INFOPLIST_FILE = twofeet/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.2;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.twofeet;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE = "";
 			};
 			name = Release;
 		};
