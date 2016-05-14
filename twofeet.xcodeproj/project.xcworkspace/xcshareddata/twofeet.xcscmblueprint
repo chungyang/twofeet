@@ -1,0 +1,30 @@
+{
+  "DVTSourceControlWorkspaceBlueprintPrimaryRemoteRepositoryKey" : "79054517DD29B1284036E295E4E5A9EF6485C5F6",
+  "DVTSourceControlWorkspaceBlueprintWorkingCopyRepositoryLocationsKey" : {
+
+  },
+  "DVTSourceControlWorkspaceBlueprintWorkingCopyStatesKey" : {
+    "79054517DD29B1284036E295E4E5A9EF6485C5F6" : 0,
+    "DE04DE2F7DEBE78586ED25CC854B6B7553F76B75" : 0
+  },
+  "DVTSourceControlWorkspaceBlueprintIdentifierKey" : "E2A5763C-27D1-4978-A974-30226A436456",
+  "DVTSourceControlWorkspaceBlueprintWorkingCopyPathsKey" : {
+    "79054517DD29B1284036E295E4E5A9EF6485C5F6" : "twofeet\/",
+    "DE04DE2F7DEBE78586ED25CC854B6B7553F76B75" : "..\/opencv"
+  },
+  "DVTSourceControlWorkspaceBlueprintNameKey" : "twofeet",
+  "DVTSourceControlWorkspaceBlueprintVersion" : 204,
+  "DVTSourceControlWorkspaceBlueprintRelativePathToProjectKey" : "twofeet.xcodeproj",
+  "DVTSourceControlWorkspaceBlueprintRemoteRepositoriesKey" : [
+    {
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryURLKey" : "https:\/\/github.com\/chungyang\/twofeet.git",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositorySystemKey" : "com.apple.dt.Xcode.sourcecontrol.Git",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryIdentifierKey" : "79054517DD29B1284036E295E4E5A9EF6485C5F6"
+    },
+    {
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryURLKey" : "https:\/\/github.com\/Itseez\/opencv.git",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositorySystemKey" : "com.apple.dt.Xcode.sourcecontrol.Git",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryIdentifierKey" : "DE04DE2F7DEBE78586ED25CC854B6B7553F76B75"
+    }
+  ]
+}

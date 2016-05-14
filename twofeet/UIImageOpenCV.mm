@@ -1,15 +1,19 @@
 //
-//  UIImage+OpenCV.mm
+//  UIImageOpenCV.mm
 //  twofeet
 //
 //  Created by chung yang on 5/10/16.
 //  Copyright © 2016 two feet inc. All rights reserved.
 //
 
-#import "UIImage+OpenCV.h"
+#include "UIImageOpenCV.h"
 
 
-@implementation ImageProcessor
+
+
+
+
+@implementation UIImageOpenCV
 
 +(cv::Mat)UIImage2CVMat:(UIImage*) image
 {
@@ -73,5 +77,8 @@
     
     return finalImage;
 }
+
+
+
 
 @end

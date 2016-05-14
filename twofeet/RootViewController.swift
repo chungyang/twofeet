@@ -6,6 +6,7 @@
 //  Copyright © 2016 two feet inc. All rights reserved.
 //
 
+
 import Foundation
 import UIKit
 
@@ -21,11 +22,12 @@ class RootViewController: UIViewController, UIImagePickerControllerDelegate,UINa
     }
     
     func imagePickerController(picker: UIImagePickerController!, didFinishPickingImage image: UIImage!, editingInfo: NSDictionary!){
+        
         self.dismissViewControllerAnimated(true, completion: { () -> Void in
             
         })
         
-        ImagePicked.image = image
+        ImagePicked.image = ImageProcessor.CannyEdge(image,threshold1: 0,threshold2: 50);
         
     }
     

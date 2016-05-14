@@ -13,7 +13,8 @@
 		0A4F88461CE5A9800033B9A6 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 0A4F88451CE5A9800033B9A6 /* Assets.xcassets */; };
 		0A4F88491CE5A9800033B9A6 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 0A4F88471CE5A9800033B9A6 /* LaunchScreen.storyboard */; };
 		0A4F88571CE5ABDE0033B9A6 /* opencv2.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0A4F88561CE5ABDE0033B9A6 /* opencv2.framework */; };
-		0A4F885B1CE5B50C0033B9A6 /* UIImage+OpenCV.mm in Sources */ = {isa = PBXBuildFile; fileRef = 0A4F885A1CE5B50C0033B9A6 /* UIImage+OpenCV.mm */; };
+		0A4F885B1CE5B50C0033B9A6 /* UIImageOpenCV.mm in Sources */ = {isa = PBXBuildFile; fileRef = 0A4F885A1CE5B50C0033B9A6 /* UIImageOpenCV.mm */; };
+		0A4F885E1CE6879C0033B9A6 /* ImageProcessor.mm in Sources */ = {isa = PBXBuildFile; fileRef = 0A4F885D1CE6879C0033B9A6 /* ImageProcessor.mm */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -24,11 +25,13 @@
 		0A4F88451CE5A9800033B9A6 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		0A4F88481CE5A9800033B9A6 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		0A4F884A1CE5A9800033B9A6 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		0A4F88551CE5AA850033B9A6 /* PrefixHeader.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PrefixHeader.pch; path = ../../../Desktop/PrefixHeader.pch; sourceTree = "<group>"; };
 		0A4F88561CE5ABDE0033B9A6 /* opencv2.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = opencv2.framework; path = ../../opencv/ios/opencv2.framework; sourceTree = "<group>"; };
 		0A4F88581CE5B50C0033B9A6 /* twofeet-Bridging-Header.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "twofeet-Bridging-Header.h"; sourceTree = "<group>"; };
-		0A4F88591CE5B50C0033B9A6 /* UIImage+OpenCV.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIImage+OpenCV.h"; sourceTree = "<group>"; };
-		0A4F885A1CE5B50C0033B9A6 /* UIImage+OpenCV.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = "UIImage+OpenCV.mm"; sourceTree = "<group>"; };
+		0A4F88591CE5B50C0033B9A6 /* UIImageOpenCV.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UIImageOpenCV.h; sourceTree = "<group>"; };
+		0A4F885A1CE5B50C0033B9A6 /* UIImageOpenCV.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = UIImageOpenCV.mm; sourceTree = "<group>"; };
+		0A4F885C1CE6837A0033B9A6 /* PrefixHeader.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PrefixHeader.pch; sourceTree = "<group>"; };
+		0A4F885D1CE6879C0033B9A6 /* ImageProcessor.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ImageProcessor.mm; sourceTree = "<group>"; };
+		0A4F885F1CE687B90033B9A6 /* ImageProcessor.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ImageProcessor.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -63,16 +66,18 @@
 		0A4F88391CE5A9800033B9A6 /* twofeet */ = {
 			isa = PBXGroup;
 			children = (
+				0A4F885C1CE6837A0033B9A6 /* PrefixHeader.pch */,
 				0A4F88581CE5B50C0033B9A6 /* twofeet-Bridging-Header.h */,
-				0A4F88591CE5B50C0033B9A6 /* UIImage+OpenCV.h */,
-				0A4F885A1CE5B50C0033B9A6 /* UIImage+OpenCV.mm */,
-				0A4F88551CE5AA850033B9A6 /* PrefixHeader.pch */,
+				0A4F88591CE5B50C0033B9A6 /* UIImageOpenCV.h */,
+				0A4F885A1CE5B50C0033B9A6 /* UIImageOpenCV.mm */,
 				0A4F883A1CE5A9800033B9A6 /* AppDelegate.swift */,
 				0A4F883C1CE5A9800033B9A6 /* RootViewController.swift */,
 				0A4F88421CE5A9800033B9A6 /* Main.storyboard */,
 				0A4F88451CE5A9800033B9A6 /* Assets.xcassets */,
 				0A4F88471CE5A9800033B9A6 /* LaunchScreen.storyboard */,
 				0A4F884A1CE5A9800033B9A6 /* Info.plist */,
+				0A4F885D1CE6879C0033B9A6 /* ImageProcessor.mm */,
+				0A4F885F1CE687B90033B9A6 /* ImageProcessor.h */,
 			);
 			path = twofeet;
 			sourceTree = "<group>";
@@ -157,8 +162,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				0A4F885B1CE5B50C0033B9A6 /* UIImageOpenCV.mm in Sources */,
 				0A4F883D1CE5A9800033B9A6 /* RootViewController.swift in Sources */,
-				0A4F885B1CE5B50C0033B9A6 /* UIImage+OpenCV.mm in Sources */,
+				0A4F885E1CE6879C0033B9A6 /* ImageProcessor.mm in Sources */,
 				0A4F883B1CE5A9800033B9A6 /* AppDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -284,6 +290,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.twofeet;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
+				SWIFT_OBJC_BRIDGING_HEADER = "/Users/chungyang/Documents/twofeet/twofeet/twofeet-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 			};
 			name = Debug;
@@ -304,6 +311,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.twofeet;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
+				SWIFT_OBJC_BRIDGING_HEADER = "/Users/chungyang/Documents/twofeet/twofeet/twofeet-Bridging-Header.h";
 			};
 			name = Release;
 		};
