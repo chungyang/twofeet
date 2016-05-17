@@ -14,5 +14,6 @@
 
 +(cv::Mat)UIImage2CVMat:(UIImage*) image;
 +(UIImage*)CVMat2UIImage:(cv::Mat)cvMat;
++(cv::Mat)UIImage2CVMatGray:(UIImage*) image;
 
 @end

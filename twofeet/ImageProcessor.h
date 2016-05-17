@@ -13,7 +13,7 @@
 #import <UIKit/UIKit.h>
 
 @interface ImageProcessor : NSObject
-+(UIImage*)CannyEdge:(UIImage*) image threshold1:(double) th1 threshold2:(double) th2;
++(UIImage*)cannyEdge:(UIImage*) image threshold1:(double) th1 threshold2:(double) th2 flag:(int) flag;
 @end
 
 #endif /* ImageProcessor_h */

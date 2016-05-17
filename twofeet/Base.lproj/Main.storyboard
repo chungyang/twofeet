@@ -17,32 +17,38 @@
                         <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="58X-Qb-ojE">
-                                <rect key="frame" x="11" y="496" width="131" height="52"/>
-                                <fontDescription key="fontDescription" type="system" weight="black" pointSize="17"/>
-                                <state key="normal" title="Open Camera"/>
-                                <connections>
-                                    <action selector="openCameraButton:" destination="703-4V-yAM" eventType="touchUpInside" id="okA-Gv-gAq"/>
-                                </connections>
-                            </button>
                             <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="l0u-sG-u7Y">
-                                <rect key="frame" x="0.0" y="28" width="320" height="475"/>
+                                <rect key="frame" x="0.0" y="274" width="320" height="250"/>
                             </imageView>
-                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="EL7-OU-vye">
-                                <rect key="frame" x="175" y="494" width="145" height="54"/>
-                                <fontDescription key="fontDescription" type="system" weight="black" pointSize="17"/>
-                                <state key="normal" title="Open Gallery">
-                                    <color key="titleColor" red="1" green="0.083827332911809438" blue="0.10107558368303404" alpha="1" colorSpace="calibratedRGB"/>
-                                </state>
-                                <connections>
-                                    <action selector="OpenGalleryButton:" destination="703-4V-yAM" eventType="touchUpInside" id="5e6-Af-atM"/>
-                                </connections>
-                            </button>
+                            <toolbar opaque="NO" clearsContextBeforeDrawing="NO" contentMode="scaleToFill" fixedFrame="YES" translucent="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Gtp-gA-1dV">
+                                <rect key="frame" x="0.0" y="524" width="320" height="44"/>
+                                <color key="backgroundColor" red="0.43529411759999997" green="0.4431372549" blue="0.47450980390000003" alpha="1" colorSpace="calibratedRGB"/>
+                                <items>
+                                    <barButtonItem systemItem="play" id="209-jR-iX6">
+                                        <connections>
+                                            <action selector="startCameraButton:" destination="703-4V-yAM" id="M1m-Lh-q5D"/>
+                                        </connections>
+                                    </barButtonItem>
+                                    <barButtonItem style="plain" systemItem="flexibleSpace" id="DO8-u9-wSg"/>
+                                    <barButtonItem systemItem="pause" id="1Gt-Ng-pf9">
+                                        <connections>
+                                            <action selector="pauseCameraButton:" destination="703-4V-yAM" id="nHy-se-O7Q"/>
+                                        </connections>
+                                    </barButtonItem>
+                                    <barButtonItem style="plain" systemItem="flexibleSpace" id="Vyg-Io-6jU"/>
+                                    <barButtonItem systemItem="add" id="nNx-T4-cWT">
+                                        <connections>
+                                            <action selector="openGalleryButton:" destination="703-4V-yAM" id="zkB-qF-rWX"/>
+                                        </connections>
+                                    </barButtonItem>
+                                </items>
+                                <color key="barTintColor" red="0.035954944789409637" green="0.0061259325593709946" blue="0.0090280221775174141" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                            </toolbar>
                         </subviews>
-                        <color key="backgroundColor" red="0.60000002379999995" green="0.40000000600000002" blue="0.20000000300000001" alpha="1" colorSpace="calibratedRGB"/>
                     </view>
                     <connections>
                         <outlet property="ImagePicked" destination="l0u-sG-u7Y" id="v6z-AI-hUg"/>
+                        <outlet property="toolBar" destination="Gtp-gA-1dV" id="dpU-BG-aau"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Q3h-pU-vEd" sceneMemberID="firstResponder"/>
