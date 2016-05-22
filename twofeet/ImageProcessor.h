@@ -14,6 +14,7 @@
 
 @interface ImageProcessor : NSObject
 +(UIImage*)cannyEdge:(UIImage*) image threshold1:(double) th1 threshold2:(double) th2 flag:(int) flag;
++(UIImage*)houghCircleTransform:(UIImage*) image;
 @end
 
 #endif /* ImageProcessor_h */

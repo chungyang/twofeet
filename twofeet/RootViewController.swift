@@ -27,19 +27,14 @@ class RootViewController: UIViewController, UIImagePickerControllerDelegate,UINa
         return s
     }()
     
-    let screenWidth = UIScreen.mainScreen().bounds.size.width
-    
-    var count = 0;
-    
-    
     override func viewDidLoad() {
         super.viewDidLoad()
         ImagePicked.contentMode = UIViewContentMode.ScaleAspectFill
         ImagePicked.clipsToBounds = true;
-        setupSession()
+        setupSession(1)
     }
     
-    func setupSession() {
+    func setupSession(rgbFlag:Int) {
         
         let captureDevice = AVCaptureDevice.defaultDeviceWithMediaType(AVMediaTypeVideo) as AVCaptureDevice
 
@@ -52,7 +47,13 @@ class RootViewController: UIViewController, UIImagePickerControllerDelegate,UINa
             }
             
             let dataOutput = AVCaptureVideoDataOutput()
-            dataOutput.videoSettings = [(kCVPixelBufferPixelFormatTypeKey as NSString) : NSNumber(unsignedInt: kCVPixelFormatType_420YpCbCr8BiPlanarFullRange)]
+            
+            if(rgbFlag == 0){
+                dataOutput.videoSettings = [(kCVPixelBufferPixelFormatTypeKey as NSString) : NSNumber(unsignedInt: kCVPixelFormatType_420YpCbCr8BiPlanarFullRange)]
+            }
+            else if(rgbFlag == 1){
+                dataOutput.videoSettings = [(kCVPixelBufferPixelFormatTypeKey as NSString) : NSNumber(unsignedInt: kCVPixelFormatType_32BGRA)]
+            }
             dataOutput.alwaysDiscardsLateVideoFrames = true
             
             if (captureSession.canAddOutput(dataOutput) == true) {
@@ -83,10 +84,10 @@ class RootViewController: UIViewController, UIImagePickerControllerDelegate,UINa
             
         })
         
-        ImagePicked.image = ImageProcessor.cannyEdge(image,threshold1: 20,threshold2: 60,flag: 0);
+        ImagePicked.image = ImageProcessor.cannyEdge(image,threshold1: 40,threshold2: 90,flag: 0);
         
     }
-    
+
     func imageFromSampleBuffer(sampleBuffer:CMSampleBuffer) -> UIImage{
         // Get a CMSampleBuffer's Core Video image buffer for the media data
         let imageBuffer = CMSampleBufferGetImageBuffer(sampleBuffer);
@@ -97,11 +98,16 @@ class RootViewController: UIViewController, UIImagePickerControllerDelegate,UINa
         // Get the number of bytes per row for the pixel buffer
         let bytesPerRow = CVPixelBufferGetBytesPerRowOfPlane(imageBuffer!,0);
         // Get the pixel buffer width and height
-        let width = CVPixelBufferGetWidthOfPlane(imageBuffer!,0 )
-        let height = CVPixelBufferGetHeightOfPlane(imageBuffer!,0);
-         // Create a device-dependent RGB color space
-        let colorSpace = CGColorSpaceCreateDeviceGray()
-        let context = CGBitmapContextCreate(baseAddress, width, height, 8, bytesPerRow,colorSpace, CGImageAlphaInfo.None.rawValue);
+        let width = CVPixelBufferGetWidth(imageBuffer!)
+        let height = CVPixelBufferGetHeight(imageBuffer!);
+         // Create a device-dependent RGB color space or GRAY color space
+        let colorSpace = CGColorSpaceCreateDeviceRGB()
+        //let colorSpace = CGColorSpaceCreateDeviceGray()
+        //let context = CGBitmapContextCreate(baseAddress, width, height, 8, bytesPerRow,colorSpace, CGImageAlphaInfo.None.rawValue);
+        let context = CGBitmapContextCreate(baseAddress, width, height, 8, bytesPerRow,colorSpace, CGImageAlphaInfo.NoneSkipLast.rawValue);
+        if(context == nil){
+            print("context returned nil")
+        }
         let dstCGImage = CGBitmapContextCreateImage(context);
         // Unlock the pixel buffer
         CVPixelBufferUnlockBaseAddress(imageBuffer!,0);
@@ -111,12 +117,16 @@ class RootViewController: UIViewController, UIImagePickerControllerDelegate,UINa
     
     func captureOutput(captureOutput: AVCaptureOutput!, didOutputSampleBuffer sampleBuffer: CMSampleBuffer!, fromConnection connection: AVCaptureConnection!) {
         
-    
         dispatch_async(queue,{
+            print("start processing")
             let imagebuffer = self.imageFromSampleBuffer(sampleBuffer)
-            
+            let processedImage = ImageProcessor.cannyEdge(imagebuffer,threshold1: 40,threshold2: 90,flag: 0);
+// ImageProcessor.houghCircleTransform(imagebuffer);
+            print("finsih processing")
             dispatch_async(dispatch_get_main_queue(),{
-                self.ImagePicked.image = ImageProcessor.cannyEdge(imagebuffer,threshold1: 20,threshold2: 60,flag: 1);
+                print("post result")
+                self.ImagePicked.image = processedImage
+                self.ImagePicked.transform = CGAffineTransformMakeRotation(CGFloat(M_PI_2));
             })
         })
     }

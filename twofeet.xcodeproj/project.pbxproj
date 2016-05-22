@@ -15,6 +15,8 @@
 		0A4F88571CE5ABDE0033B9A6 /* opencv2.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0A4F88561CE5ABDE0033B9A6 /* opencv2.framework */; };
 		0A4F885B1CE5B50C0033B9A6 /* UIImageOpenCV.mm in Sources */ = {isa = PBXBuildFile; fileRef = 0A4F885A1CE5B50C0033B9A6 /* UIImageOpenCV.mm */; };
 		0A4F885E1CE6879C0033B9A6 /* ImageProcessor.mm in Sources */ = {isa = PBXBuildFile; fileRef = 0A4F885D1CE6879C0033B9A6 /* ImageProcessor.mm */; };
+		0A4F88611CF1524E0033B9A6 /* MeasurementViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A4F88601CF1524E0033B9A6 /* MeasurementViewController.swift */; };
+		0A4F88631CF161B00033B9A6 /* PageViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A4F88621CF161B00033B9A6 /* PageViewController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -32,6 +34,8 @@
 		0A4F885C1CE6837A0033B9A6 /* PrefixHeader.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PrefixHeader.pch; sourceTree = "<group>"; };
 		0A4F885D1CE6879C0033B9A6 /* ImageProcessor.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ImageProcessor.mm; sourceTree = "<group>"; };
 		0A4F885F1CE687B90033B9A6 /* ImageProcessor.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ImageProcessor.h; sourceTree = "<group>"; };
+		0A4F88601CF1524E0033B9A6 /* MeasurementViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MeasurementViewController.swift; sourceTree = "<group>"; };
+		0A4F88621CF161B00033B9A6 /* PageViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PageViewController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -66,18 +70,20 @@
 		0A4F88391CE5A9800033B9A6 /* twofeet */ = {
 			isa = PBXGroup;
 			children = (
-				0A4F885C1CE6837A0033B9A6 /* PrefixHeader.pch */,
-				0A4F88581CE5B50C0033B9A6 /* twofeet-Bridging-Header.h */,
-				0A4F88591CE5B50C0033B9A6 /* UIImageOpenCV.h */,
-				0A4F885A1CE5B50C0033B9A6 /* UIImageOpenCV.mm */,
 				0A4F883A1CE5A9800033B9A6 /* AppDelegate.swift */,
 				0A4F883C1CE5A9800033B9A6 /* RootViewController.swift */,
-				0A4F88421CE5A9800033B9A6 /* Main.storyboard */,
-				0A4F88451CE5A9800033B9A6 /* Assets.xcassets */,
-				0A4F88471CE5A9800033B9A6 /* LaunchScreen.storyboard */,
-				0A4F884A1CE5A9800033B9A6 /* Info.plist */,
+				0A4F88621CF161B00033B9A6 /* PageViewController.swift */,
+				0A4F88601CF1524E0033B9A6 /* MeasurementViewController.swift */,
 				0A4F885D1CE6879C0033B9A6 /* ImageProcessor.mm */,
 				0A4F885F1CE687B90033B9A6 /* ImageProcessor.h */,
+				0A4F885A1CE5B50C0033B9A6 /* UIImageOpenCV.mm */,
+				0A4F88591CE5B50C0033B9A6 /* UIImageOpenCV.h */,
+				0A4F885C1CE6837A0033B9A6 /* PrefixHeader.pch */,
+				0A4F88581CE5B50C0033B9A6 /* twofeet-Bridging-Header.h */,
+				0A4F88451CE5A9800033B9A6 /* Assets.xcassets */,
+				0A4F88421CE5A9800033B9A6 /* Main.storyboard */,
+				0A4F88471CE5A9800033B9A6 /* LaunchScreen.storyboard */,
+				0A4F884A1CE5A9800033B9A6 /* Info.plist */,
 			);
 			path = twofeet;
 			sourceTree = "<group>";
@@ -163,7 +169,9 @@
 			buildActionMask = 2147483647;
 			files = (
 				0A4F885B1CE5B50C0033B9A6 /* UIImageOpenCV.mm in Sources */,
+				0A4F88611CF1524E0033B9A6 /* MeasurementViewController.swift in Sources */,
 				0A4F883D1CE5A9800033B9A6 /* RootViewController.swift in Sources */,
+				0A4F88631CF161B00033B9A6 /* PageViewController.swift in Sources */,
 				0A4F885E1CE6879C0033B9A6 /* ImageProcessor.mm in Sources */,
 				0A4F883B1CE5A9800033B9A6 /* AppDelegate.swift in Sources */,
 			);
