@@ -51,27 +51,42 @@
     return [UIImageOpenCV CVMat2UIImage:imageMat];
 }
 
-+(UIImage*)extractSkinTone:(UIImage*) image{
+
++(UIImage*)showsOnlySkinTone:(UIImage*) image{
     
+    //Extract skin tone
     cv::Mat imageMat;
     std::vector<cv::Mat> channels;
-    cv::Mat bgr[3];
-    cv::Scalar redComponentMean;
-    cv::Scalar blueComponentMean;
-    cv::Scalar greenComponentMean;
-    cv::Scalar alphaComponentMean;
+    static cv::Scalar componentMean[3];
     
     imageMat = [UIImageOpenCV UIImage2CVMat:image];
     
     cv::split(imageMat,channels);
     
-    blueComponentMean = cv::mean(channels[0]);
-    greenComponentMean = cv::mean(channels[1]);
-    redComponentMean = cv::mean(channels[2]);
-    alphaComponentMean = cv::mean(channels[3]);
+    componentMean[0] = cv::mean(channels[0]);
+    componentMean[1]  = cv::mean(channels[1]);
+    componentMean[2]  = cv::mean(channels[2]);
     
+    //Create a multi channel lookup table
+    cv::Mat lut(1,256,CV_8UC4);
+    
+    for(int i = 0; i < 256; i++){
+        //All three channels have to be within the tolerance to be considered as having the same color as skin
+        if(fabs(i - componentMean[0][0]) < 10 && fabs(i - componentMean[1][0]) < 10 && fabs(i - componentMean[2][0]) < 10){
+            lut.at<cv::Vec3b>(i)[0] = i;
+            lut.at<cv::Vec3b>(i)[1] = i;
+            lut.at<cv::Vec3b>(i)[2] = i;
+        }
+        else{
+            lut.at<cv::Vec3b>(i)[0] = 0;
+            lut.at<cv::Vec3b>(i)[1] = 0;
+            lut.at<cv::Vec3b>(i)[2] = 0;
+        }
+    }
+    
+    //Execute color reduction using the look up table, all
+    cv::LUT(imageMat,lut,imageMat);
     return [UIImageOpenCV CVMat2UIImage:imageMat];
 }
-
 
 @end
