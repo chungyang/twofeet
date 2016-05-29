@@ -120,8 +120,9 @@ class RootViewController: UIViewController, UIImagePickerControllerDelegate,UINa
         dispatch_async(queue,{
             print("start processing")
             let imagebuffer = self.imageFromSampleBuffer(sampleBuffer)
-            let processedImage = ImageProcessor.cannyEdge(imagebuffer,threshold1: 40,threshold2: 90,flag: 0);
+           // let processedImage = ImageProcessor.cannyEdge(imagebuffer,threshold1: 40,threshold2: 90,flag: 0);
 // ImageProcessor.houghCircleTransform(imagebuffer);
+            let processedImage = ImageProcessor.extractSkinTone(imagebuffer)
             print("finsih processing")
             dispatch_async(dispatch_get_main_queue(),{
                 print("post result")
@@ -154,4 +155,8 @@ class RootViewController: UIViewController, UIImagePickerControllerDelegate,UINa
         }
     }
 
+    @IBAction func swifthViewButton(sender: AnyObject) {
+        let measurementViewController = self.storyboard!.instantiateViewControllerWithIdentifier("MeasurementViewController") as! MeasurementViewController
+        self.presentViewController(measurementViewController, animated:true, completion:nil)
+    }
 }

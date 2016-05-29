@@ -30,7 +30,8 @@
                                                     8,                          // Bits per component
                                                     cvMat.step[0],              // Bytes per row
                                                     colorSpace,                 // Colorspace
-                                                    kCGImageAlphaNoneSkipLast); // Bitmap info flags
+                                                    kCGImageAlphaNoneSkipLast |
+                                                    kCGBitmapByteOrderDefault); // Bitmap info flags
     
     CGContextDrawImage(contextRef, CGRectMake(0, 0, cols, rows), image.CGImage);
     CGContextRelease(contextRef);

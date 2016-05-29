@@ -51,5 +51,27 @@
     return [UIImageOpenCV CVMat2UIImage:imageMat];
 }
 
++(UIImage*)extractSkinTone:(UIImage*) image{
+    
+    cv::Mat imageMat;
+    std::vector<cv::Mat> channels;
+    cv::Mat bgr[3];
+    cv::Scalar redComponentMean;
+    cv::Scalar blueComponentMean;
+    cv::Scalar greenComponentMean;
+    cv::Scalar alphaComponentMean;
+    
+    imageMat = [UIImageOpenCV UIImage2CVMat:image];
+    
+    cv::split(imageMat,channels);
+    
+    blueComponentMean = cv::mean(channels[0]);
+    greenComponentMean = cv::mean(channels[1]);
+    redComponentMean = cv::mean(channels[2]);
+    alphaComponentMean = cv::mean(channels[3]);
+    
+    return [UIImageOpenCV CVMat2UIImage:imageMat];
+}
+
 
 @end

@@ -1,18 +1,10 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="10117" systemVersion="15C50" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" initialViewController="I9M-CF-rbr">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="10117" systemVersion="15C50" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" initialViewController="703-4V-yAM">
     <dependencies>
         <deployment identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="10085"/>
     </dependencies>
     <scenes>
-        <!--Page View Controller-->
-        <scene sceneID="Gza-hr-CI0">
-            <objects>
-                <pageViewController storyboardIdentifier="PageViewController" autoresizesArchivedViewToFullSize="NO" useStoryboardIdentifierAsRestorationIdentifier="YES" transitionStyle="pageCurl" navigationOrientation="horizontal" spineLocation="min" id="I9M-CF-rbr" customClass="PageViewController" customModule="twofeet" customModuleProvider="target" sceneMemberID="viewController"/>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="c3v-Wc-b1e" userLabel="First Responder" sceneMemberID="firstResponder"/>
-            </objects>
-            <point key="canvasLocation" x="-408" y="-231"/>
-        </scene>
         <!--Root View Controller-->
         <scene sceneID="clB-vc-fyl">
             <objects>
@@ -49,6 +41,12 @@
                                             <action selector="openGalleryButton:" destination="703-4V-yAM" id="zkB-qF-rWX"/>
                                         </connections>
                                     </barButtonItem>
+                                    <barButtonItem style="plain" systemItem="flexibleSpace" id="Xqe-yH-S0O"/>
+                                    <barButtonItem systemItem="action" id="LVv-vQ-qf8" userLabel="Switch">
+                                        <connections>
+                                            <action selector="swifthViewButton:" destination="703-4V-yAM" id="3ya-Z3-4Pu"/>
+                                        </connections>
+                                    </barButtonItem>
                                 </items>
                                 <color key="barTintColor" red="0.035954944789409637" green="0.0061259325593709946" blue="0.0090280221775174141" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                             </toolbar>
@@ -67,7 +65,6 @@
         <!--Measurement View Controller-->
         <scene sceneID="Hiy-hr-Ev7">
             <objects>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="Fkn-Jh-b8O" userLabel="First Responder" sceneMemberID="firstResponder"/>
                 <viewController storyboardIdentifier="MeasurementViewController" useStoryboardIdentifierAsRestorationIdentifier="YES" id="ufX-AO-XUA" customClass="MeasurementViewController" customModule="twofeet" customModuleProvider="target" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="QXT-ie-11e"/>
@@ -76,9 +73,20 @@
                     <view key="view" contentMode="scaleToFill" id="7fa-TK-HzK">
                         <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="aQX-gt-JFD">
+                                <rect key="frame" x="264" y="530" width="41" height="30"/>
+                                <state key="normal" title="Home"/>
+                                <connections>
+                                    <action selector="rootViewButton:" destination="ufX-AO-XUA" eventType="touchUpInside" id="6R6-n4-caP"/>
+                                </connections>
+                            </button>
+                        </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        <gestureRecognizers/>
                     </view>
                 </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="Fkn-Jh-b8O" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="349" y="-231"/>
         </scene>
