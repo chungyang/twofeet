@@ -13,9 +13,15 @@
 #import <UIKit/UIKit.h>
 
 @interface ImageProcessor : NSObject
+
+@property (atomic) double* componenetMean;
+
 +(UIImage*)cannyEdge:(UIImage*) image threshold1:(double) th1 threshold2:(double) th2 flag:(int) flag;
 +(UIImage*)houghCircleTransform:(UIImage*) image;
-+(UIImage*)showsOnlySkinTone:(UIImage*) image;
+-(void)extractSkinTone:(UIImage*) image;
+-(UIImage*)showsOnlySkinTone:(UIImage*) image;
 @end
+
+
 
 #endif /* ImageProcessor_h */

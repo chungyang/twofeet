@@ -20,6 +20,7 @@ class RootViewController: UIViewController, UIImagePickerControllerDelegate,UINa
     @IBOutlet weak var toolBar: UIToolbar!
     let queue = dispatch_queue_create("com.twofeet.queue", DISPATCH_QUEUE_SERIAL)
     var imagePicker = UIImagePickerController()
+    var imageProcessor = ImageProcessor()
     
     lazy var captureSession : AVCaptureSession = {
         let s = AVCaptureSession()
@@ -120,11 +121,12 @@ class RootViewController: UIViewController, UIImagePickerControllerDelegate,UINa
         dispatch_async(queue,{
             print("start processing")
             let imagebuffer = self.imageFromSampleBuffer(sampleBuffer)
-            let processedImage = ImageProcessor.showsOnlySkinTone(imagebuffer)
+            self.imageProcessor.extractSkinTone(imagebuffer)
+            //let processedImage = ImageProcessor.showsOnlySkinTone(imagebuffer)
             print("finsih processing")
             dispatch_async(dispatch_get_main_queue(),{
                 print("post result")
-                self.ImagePicked.image = processedImage
+                //self.ImagePicked.image = processedImage
                 self.ImagePicked.transform = CGAffineTransformMakeRotation(CGFloat(M_PI_2));
             })
         })

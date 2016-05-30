@@ -11,7 +11,8 @@
 #import "UIImageOpenCV.h"
 
 
-@implementation ImageProcessor
+@implementation ImageProcessor:NSObject
+
 
 +(UIImage*)cannyEdge:(UIImage*) image threshold1:(double) th1 threshold2:(double) th2 flag:(int) flag{
     cv::Mat grayImage;
@@ -51,28 +52,37 @@
     return [UIImageOpenCV CVMat2UIImage:imageMat];
 }
 
-
-+(UIImage*)showsOnlySkinTone:(UIImage*) image{
-    
+-(void)extractSkinTone:(UIImage*) image{
     //Extract skin tone
     cv::Mat imageMat;
     std::vector<cv::Mat> channels;
-    static cv::Scalar componentMean[3];
     
     imageMat = [UIImageOpenCV UIImage2CVMat:image];
     
     cv::split(imageMat,channels);
     
-    componentMean[0] = cv::mean(channels[0]);
-    componentMean[1]  = cv::mean(channels[1]);
-    componentMean[2]  = cv::mean(channels[2]);
+    self.componenetMean = (double*) malloc(sizeof(double)*3);
+    
+    *(self.componenetMean) = cv::mean(channels[0])[0];
+    *(self.componenetMean + 1) = cv::mean(channels[1])[0];
+    *(self.componenetMean + 2) = cv::mean(channels[2])[0];
+        
+    free(self.componenetMean);
+}
+
+-(UIImage*)showsOnlySkinTone:(UIImage*) image{
+    
+    cv::Mat imageMat;
+    std::vector<cv::Mat> channels;
+    
+    imageMat = [UIImageOpenCV UIImage2CVMat:image];
     
     //Create a multi channel lookup table
     cv::Mat lut(1,256,CV_8UC4);
     
     for(int i = 0; i < 256; i++){
         //All three channels have to be within the tolerance to be considered as having the same color as skin
-        if(fabs(i - componentMean[0][0]) < 10 && fabs(i - componentMean[1][0]) < 10 && fabs(i - componentMean[2][0]) < 10){
+        if(fabs(i - *(self.componenetMean)) < 10 && fabs(i - *(self.componenetMean + 1)) < 10 && fabs(i - *(self.componenetMean + 2)) < 10){
             lut.at<cv::Vec3b>(i)[0] = i;
             lut.at<cv::Vec3b>(i)[1] = i;
             lut.at<cv::Vec3b>(i)[2] = i;
