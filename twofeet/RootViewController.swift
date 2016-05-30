@@ -19,13 +19,23 @@ class RootViewController: UIViewController, UIImagePickerControllerDelegate,UINa
     @IBOutlet weak var ImagePicked: UIImageView!
     @IBOutlet weak var toolBar: UIToolbar!
     let queue = dispatch_queue_create("com.twofeet.queue", DISPATCH_QUEUE_SERIAL)
+    let captureDevice = AVCaptureDevice.defaultDeviceWithMediaType(AVMediaTypeVideo) as AVCaptureDevice?
     var imagePicker = UIImagePickerController()
     var imageProcessor = ImageProcessor()
+    var gotSkinTone = false
     
     lazy var captureSession : AVCaptureSession = {
         let s = AVCaptureSession()
         s.sessionPreset = AVCaptureSessionPresetMedium
         return s
+    }()
+    
+    lazy var previewLayer: AVCaptureVideoPreviewLayer = {
+        let preview =  AVCaptureVideoPreviewLayer(session: self.captureSession)
+        preview.bounds = CGRect(x: 0, y: 0, width: self.view.bounds.width, height: self.view.bounds.height / 2)
+        preview.position = CGPoint(x: CGRectGetMidX(self.view.bounds), y: CGRectGetMidY(self.view.bounds)/2)
+        preview.videoGravity = AVLayerVideoGravityResize
+        return preview
     }()
     
     override func viewDidLoad() {
@@ -35,10 +45,33 @@ class RootViewController: UIViewController, UIImagePickerControllerDelegate,UINa
         setupSession(1)
     }
     
+    override func touchesBegan(touches: Set<UITouch>, withEvent event: UIEvent?) {
+        
+        for obj in touches{
+            let touchPoint = obj
+            
+            if let device = self.captureDevice {
+                do{
+                    try device.lockForConfiguration()
+                    device.focusPointOfInterest = touchPoint.locationInView(self.view)
+                    device.focusMode = AVCaptureFocusMode.AutoFocus
+
+                    device.unlockForConfiguration()
+                    
+                }catch let error as NSError{
+                    NSLog("\(error),\(error.localizedDescription)")
+               
+                }
+            }
+        }
+        
+    }
+    
+    
     func setupSession(rgbFlag:Int) {
         
-        let captureDevice = AVCaptureDevice.defaultDeviceWithMediaType(AVMediaTypeVideo) as AVCaptureDevice
-
+        gotSkinTone = false;
+        
         do{
             let deviceInput = try AVCaptureDeviceInput(device: captureDevice)
             
@@ -70,14 +103,6 @@ class RootViewController: UIViewController, UIImagePickerControllerDelegate,UINa
         }
 
     }
-    
-    lazy var previewLayer: AVCaptureVideoPreviewLayer = {
-        let preview =  AVCaptureVideoPreviewLayer(session: self.captureSession)
-        preview.bounds = CGRect(x: 0, y: 0, width: self.view.bounds.width, height: self.view.bounds.height / 2)
-        preview.position = CGPoint(x: CGRectGetMidX(self.view.bounds), y: CGRectGetMidY(self.view.bounds)/2)
-        preview.videoGravity = AVLayerVideoGravityResize
-        return preview
-    }()
 
     func imagePickerController(picker: UIImagePickerController!, didFinishPickingImage image: UIImage!, editingInfo: NSDictionary!){
         
@@ -121,16 +146,22 @@ class RootViewController: UIViewController, UIImagePickerControllerDelegate,UINa
         dispatch_async(queue,{
             print("start processing")
             let imagebuffer = self.imageFromSampleBuffer(sampleBuffer)
-            self.imageProcessor.extractSkinTone(imagebuffer)
-            //let processedImage = ImageProcessor.showsOnlySkinTone(imagebuffer)
-            print("finsih processing")
-            dispatch_async(dispatch_get_main_queue(),{
-                print("post result")
-                //self.ImagePicked.image = processedImage
-                self.ImagePicked.transform = CGAffineTransformMakeRotation(CGFloat(M_PI_2));
-            })
+          //  if(!self.gotSkinTone){
+                self.imageProcessor.extractSkinTone(imagebuffer)
+           //     self.gotSkinTone = true
+            //}
+           // else{
+                //let processedImage = self.imageProcessor.showsOnlySkinTone(imagebuffer)
+                print("finsih processing")
+                dispatch_async(dispatch_get_main_queue(),{
+                    print("post result")
+                   // self.ImagePicked.image = processedImage
+                    self.ImagePicked.transform = CGAffineTransformMakeRotation(CGFloat(M_PI_2));
+                })
+            //}
         })
     }
+
     
     //Actions
     

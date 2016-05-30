@@ -56,6 +56,11 @@
     //Extract skin tone
     cv::Mat imageMat;
     std::vector<cv::Mat> channels;
+    std::vector<cv::Scalar> means;
+    std::vector<cv::Scalar> std;
+    
+    means.reserve(3);
+    std.reserve(3);
     
     imageMat = [UIImageOpenCV UIImage2CVMat:image];
     
@@ -63,10 +68,20 @@
     
     self.componenetMean = (double*) malloc(sizeof(double)*3);
     
-    *(self.componenetMean) = cv::mean(channels[0])[0];
-    *(self.componenetMean + 1) = cv::mean(channels[1])[0];
-    *(self.componenetMean + 2) = cv::mean(channels[2])[0];
-        
+    for(int i = 0; i < 3; i++){
+        cv::meanStdDev(channels[i], means[i], std[i]);
+    }
+
+    *(self.componenetMean) = means[0][0];
+    *(self.componenetMean + 1) = means[1][0];
+    *(self.componenetMean + 2) = means[2][0];
+    
+    printf("%f\n",*(self.componenetMean));
+    printf("%f\n",sqrt(std[0][0]));
+    printf("%f\n",*(self.componenetMean+1));
+    printf("%f\n",sqrt(std[1][0]));
+    printf("%f\n",*(self.componenetMean+2));
+    printf("%f\n",sqrt(std[2][0]));
     free(self.componenetMean);
 }
 
@@ -78,14 +93,15 @@
     imageMat = [UIImageOpenCV UIImage2CVMat:image];
     
     //Create a multi channel lookup table
-    cv::Mat lut(1,256,CV_8UC4);
+    cv::cvtColor(imageMat, imageMat, CV_BGRA2BGR);
+    cv::Mat lut(1,256,CV_8UC3);
     
     for(int i = 0; i < 256; i++){
         //All three channels have to be within the tolerance to be considered as having the same color as skin
-        if(fabs(i - *(self.componenetMean)) < 10 && fabs(i - *(self.componenetMean + 1)) < 10 && fabs(i - *(self.componenetMean + 2)) < 10){
-            lut.at<cv::Vec3b>(i)[0] = i;
-            lut.at<cv::Vec3b>(i)[1] = i;
-            lut.at<cv::Vec3b>(i)[2] = i;
+        if(fabs(i - *(self.componenetMean)) < 30 && fabs(i - *(self.componenetMean + 1)) < 30 && fabs(i - *(self.componenetMean + 2)) < 30){
+            lut.at<cv::Vec3b>(i)[0] = 255;
+            lut.at<cv::Vec3b>(i)[1] = 255;
+            lut.at<cv::Vec3b>(i)[2] = 255;
         }
         else{
             lut.at<cv::Vec3b>(i)[0] = 0;
