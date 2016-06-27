@@ -14,12 +14,18 @@
 
 @interface ImageProcessor : NSObject
 
-@property (atomic) double* componenetMean;
+@property (atomic) double* componentMean;
+@property (atomic) double* componentStd;
 
 +(UIImage*)cannyEdge:(UIImage*) image threshold1:(double) th1 threshold2:(double) th2 flag:(int) flag;
 +(UIImage*)houghCircleTransform:(UIImage*) image;
--(void)extractSkinTone:(UIImage*) image;
 -(UIImage*)showsOnlySkinTone:(UIImage*) image;
+-(UIImage*)rectangleMasking:(UIImage*)image;
+-(void)extractSkinTone:(UIImage*) image;
+-(void)releaseMemory;
+-(void)allocateMemory;
+
+
 @end
 
 

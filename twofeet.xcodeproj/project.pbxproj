@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		0A4F83D81D1E43AD00B76DF6 /* libsqlite3.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 0A4F83D71D1E43AD00B76DF6 /* libsqlite3.tbd */; };
 		0A4F883B1CE5A9800033B9A6 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A4F883A1CE5A9800033B9A6 /* AppDelegate.swift */; };
 		0A4F883D1CE5A9800033B9A6 /* RootViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A4F883C1CE5A9800033B9A6 /* RootViewController.swift */; };
 		0A4F88441CE5A9800033B9A6 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 0A4F88421CE5A9800033B9A6 /* Main.storyboard */; };
@@ -19,6 +20,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		0A4F83D71D1E43AD00B76DF6 /* libsqlite3.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libsqlite3.tbd; path = usr/lib/libsqlite3.tbd; sourceTree = SDKROOT; };
 		0A4F88371CE5A9800033B9A6 /* twofeet.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = twofeet.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		0A4F883A1CE5A9800033B9A6 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		0A4F883C1CE5A9800033B9A6 /* RootViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RootViewController.swift; sourceTree = "<group>"; };
@@ -41,6 +43,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				0A4F83D81D1E43AD00B76DF6 /* libsqlite3.tbd in Frameworks */,
 				0A4F88571CE5ABDE0033B9A6 /* opencv2.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -72,8 +75,8 @@
 				0A4F883C1CE5A9800033B9A6 /* RootViewController.swift */,
 				0A4F88601CF1524E0033B9A6 /* MeasurementViewController.swift */,
 				0A4F885D1CE6879C0033B9A6 /* ImageProcessor.mm */,
-				0A4F885F1CE687B90033B9A6 /* ImageProcessor.h */,
 				0A4F885A1CE5B50C0033B9A6 /* UIImageOpenCV.mm */,
+				0A4F885F1CE687B90033B9A6 /* ImageProcessor.h */,
 				0A4F88591CE5B50C0033B9A6 /* UIImageOpenCV.h */,
 				0A4F885C1CE6837A0033B9A6 /* PrefixHeader.pch */,
 				0A4F88581CE5B50C0033B9A6 /* twofeet-Bridging-Header.h */,
@@ -88,6 +91,7 @@
 		0A4F88521CE5AA420033B9A6 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				0A4F83D71D1E43AD00B76DF6 /* libsqlite3.tbd */,
 				0A4F88561CE5ABDE0033B9A6 /* opencv2.framework */,
 			);
 			name = Frameworks;
@@ -289,7 +293,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = twofeet/PrefixHeader.pch;
 				INFOPLIST_FILE = twofeet/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 8.2;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.1;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.twofeet;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -310,7 +314,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = twofeet/PrefixHeader.pch;
 				INFOPLIST_FILE = twofeet/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 8.2;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.1;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.twofeet;
 				PRODUCT_NAME = "$(TARGET_NAME)";

@@ -21,8 +21,11 @@ class RootViewController: UIViewController, UIImagePickerControllerDelegate,UINa
     let queue = dispatch_queue_create("com.twofeet.queue", DISPATCH_QUEUE_SERIAL)
     let captureDevice = AVCaptureDevice.defaultDeviceWithMediaType(AVMediaTypeVideo) as AVCaptureDevice?
     var imagePicker = UIImagePickerController()
-    var imageProcessor = ImageProcessor()
+    var imageProcessor:ImageProcessor?
     var gotSkinTone = false
+    var allocated = false
+    var nthFrame = 0
+    var url = ""
     
     lazy var captureSession : AVCaptureSession = {
         let s = AVCaptureSession()
@@ -42,7 +45,20 @@ class RootViewController: UIViewController, UIImagePickerControllerDelegate,UINa
         super.viewDidLoad()
         ImagePicked.contentMode = UIViewContentMode.ScaleAspectFill
         ImagePicked.clipsToBounds = true;
-        setupSession(1)
+        setupSession(true)
+        
+
+        for i in 1...554{
+            
+            if(i > 10 && i < 100){
+                url = "https://s3.ap-northeast-2.amazonaws.com/skintoneimages/original/00\(i).jpg"
+            }
+            else if(i > 100){
+                url = "https://s3.ap-northeast-2.amazonaws.com/skintoneimages/original/0\(i).jpg"
+            }
+            downloadImage(url)
+            print(url)
+        }
     }
     
     override func touchesBegan(touches: Set<UITouch>, withEvent event: UIEvent?) {
@@ -68,7 +84,7 @@ class RootViewController: UIViewController, UIImagePickerControllerDelegate,UINa
     }
     
     
-    func setupSession(rgbFlag:Int) {
+    func setupSession(rgbFlag:Bool) {
         
         gotSkinTone = false;
         
@@ -82,10 +98,10 @@ class RootViewController: UIViewController, UIImagePickerControllerDelegate,UINa
             
             let dataOutput = AVCaptureVideoDataOutput()
             
-            if(rgbFlag == 0){
+            if(!rgbFlag){
                 dataOutput.videoSettings = [(kCVPixelBufferPixelFormatTypeKey as NSString) : NSNumber(unsignedInt: kCVPixelFormatType_420YpCbCr8BiPlanarFullRange)]
             }
-            else if(rgbFlag == 1){
+            else if(rgbFlag){
                 dataOutput.videoSettings = [(kCVPixelBufferPixelFormatTypeKey as NSString) : NSNumber(unsignedInt: kCVPixelFormatType_32BGRA)]
             }
             dataOutput.alwaysDiscardsLateVideoFrames = true
@@ -114,7 +130,7 @@ class RootViewController: UIViewController, UIImagePickerControllerDelegate,UINa
         
     }
 
-    func imageFromSampleBuffer(sampleBuffer:CMSampleBuffer) -> UIImage{
+    func imageFromSampleBuffer(sampleBuffer:CMSampleBuffer, RGBFlag:Bool) -> UIImage{
         // Get a CMSampleBuffer's Core Video image buffer for the media data
         let imageBuffer = CMSampleBufferGetImageBuffer(sampleBuffer);
         // Lock the base address of the pixel buffer
@@ -126,13 +142,15 @@ class RootViewController: UIViewController, UIImagePickerControllerDelegate,UINa
         // Get the pixel buffer width and height
         let width = CVPixelBufferGetWidth(imageBuffer!)
         let height = CVPixelBufferGetHeight(imageBuffer!);
+        var context:CGContext?
          // Create a device-dependent RGB color space or GRAY color space
-        let colorSpace = CGColorSpaceCreateDeviceRGB()
-        //let colorSpace = CGColorSpaceCreateDeviceGray()
-        //let context = CGBitmapContextCreate(baseAddress, width, height, 8, bytesPerRow,colorSpace, CGImageAlphaInfo.None.rawValue);
-        let context = CGBitmapContextCreate(baseAddress, width, height, 8, bytesPerRow,colorSpace, CGImageAlphaInfo.NoneSkipLast.rawValue);
-        if(context == nil){
-            print("context returned nil")
+        if(RGBFlag){
+            let colorSpace = CGColorSpaceCreateDeviceRGB()
+            context = CGBitmapContextCreate(baseAddress, width, height, 8, bytesPerRow,colorSpace, CGImageAlphaInfo.NoneSkipLast.rawValue);
+        }
+        else{
+            let colorSpace = CGColorSpaceCreateDeviceGray()
+            context = CGBitmapContextCreate(baseAddress, width, height, 8, bytesPerRow,colorSpace, CGImageAlphaInfo.None.rawValue);
         }
         let dstCGImage = CGBitmapContextCreateImage(context);
         // Unlock the pixel buffer
@@ -143,36 +161,54 @@ class RootViewController: UIViewController, UIImagePickerControllerDelegate,UINa
     
     func captureOutput(captureOutput: AVCaptureOutput!, didOutputSampleBuffer sampleBuffer: CMSampleBuffer!, fromConnection connection: AVCaptureConnection!) {
         
-        dispatch_async(queue,{
-            print("start processing")
-            let imagebuffer = self.imageFromSampleBuffer(sampleBuffer)
-          //  if(!self.gotSkinTone){
-                self.imageProcessor.extractSkinTone(imagebuffer)
-           //     self.gotSkinTone = true
-            //}
-           // else{
-                //let processedImage = self.imageProcessor.showsOnlySkinTone(imagebuffer)
-                print("finsih processing")
-                dispatch_async(dispatch_get_main_queue(),{
-                    print("post result")
-                   // self.ImagePicked.image = processedImage
-                    self.ImagePicked.transform = CGAffineTransformMakeRotation(CGFloat(M_PI_2));
-                })
-            //}
+//        dispatch_async(queue,{
+//            let imagebuffer = self.imageFromSampleBuffer(sampleBuffer,RGBFlag: true)
+//         
+//            dispatch_async(dispatch_get_main_queue(),{
+//                self.ImagePicked.image = processedImage
+//                self.ImagePicked.transform = CGAffineTransformMakeRotation(CGFloat(M_PI_2));
+//            })
+//        })
+        
+    }
+    
+   
+    
+    func downloadImage(url : String){
+        let url = NSURL(string : url)
+        
+        dispatch_async(queue, {
+            
+            let data = NSData(contentsOfURL: url!)
+            if(data != nil){
+                dispatch_async(dispatch_get_main_queue(), {
+                    self.ImagePicked.image = UIImage(data: data!)
+                });
+            }
+        
         })
     }
-
     
     //Actions
     
     @IBAction func startCameraButton(sender: AnyObject) {
         view.layer.addSublayer(previewLayer)
+        if(!allocated){
+            imageProcessor = ImageProcessor()
+            imageProcessor!.allocateMemory()
+            allocated = true
+        }
         captureSession.startRunning()
     }
     
     @IBAction func pauseCameraButton(sender: AnyObject) {
         captureSession.stopRunning()
-
+        self.nthFrame = 0
+        self.gotSkinTone = false
+        if(allocated){
+            self.imageProcessor!.releaseMemory()
+            allocated = false
+        }
     }
     
     @IBAction func openGalleryButton(sender: AnyObject) {

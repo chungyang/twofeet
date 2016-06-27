@@ -53,7 +53,7 @@
                                                     8,                          // Bits per component
                                                     cvMat.step[0],              // Bytes per row
                                                     colorSpace,                 // Colorspace
-                                                    kCGImageAlphaNone ); // Bitmap info flags
+                                                    kCGImageAlphaNone );        // Bitmap info flags
     
     CGContextDrawImage(contextRef, CGRectMake(0, 0, cols, rows), image.CGImage);
     CGContextRelease(contextRef);
@@ -73,7 +73,7 @@
         bitmapInfo = kCGImageAlphaNone | kCGBitmapByteOrderDefault;
     } else {
         colorSpace = CGColorSpaceCreateDeviceRGB();
-        bitmapInfo = kCGBitmapByteOrder32Little | (cvMat.elemSize() == 3? kCGImageAlphaNone : kCGImageAlphaNoneSkipFirst);
+        bitmapInfo = kCGBitmapByteOrder32Big | (cvMat.elemSize() == 3? kCGImageAlphaNone : kCGImageAlphaNoneSkipLast);
     }
     
     CGDataProviderRef provider = CGDataProviderCreateWithCFData((__bridge CFDataRef)data);
