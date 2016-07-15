@@ -74,7 +74,7 @@ static int y_offset[] = {-1, -1,  0,  1,  1,  1,  0, -1};
             Cb = channels[1].at<uchar>(i,j);
             Cr = channels[2].at<uchar>(i,j);
             //For some reason the skin tone belongs to the range outside the first if statement
-            if((Cr >= 100 && Cr <= 200) && (Cb >= 50 && Cb <= 150)){
+            if((Cr >= 100 && Cr <= 210) && (Cb >= 40 && Cb <= 150)){
                 channels[0].at<uchar>(i, j) = 0;
                 channels[1].at<uchar>(i, j) = 0;
                 channels[2].at<uchar>(i,j) = 0;
@@ -93,7 +93,6 @@ static int y_offset[] = {-1, -1,  0,  1,  1,  1,  0, -1};
 
 //Stage two
 +(Mat)densityRegularization:(Mat)input{
-    
     
     int density,nlocalFullDensity;
     NSMutableArray* x_erode_candidates = [[NSMutableArray alloc] init];
@@ -188,14 +187,43 @@ static int y_offset[] = {-1, -1,  0,  1,  1,  1,  0, -1};
     return densityMap;
 }
 
+//Stage 3
++(Mat)luminanceRegularization:(Mat)outputfromstage2 luminance:(Mat)luminance{
+    
+    double sum,meanSquare, squareMean,std;
+    
+    for(int x = 0; x < outputfromstage2.rows; x++){
+        for(int y = 0; y < outputfromstage2.cols; y++){
+            
+            sum = 0;
+            
+            for(int i = 0; i < 4;i++){
+                for(int j = 0; j < 4; j++){
+                    sum += luminance.at<uchar>(4 * x + i, 4 * y + j);
+                }
+            }
+            meanSquare = pow(sum / 16, 2);
+            squareMean = pow(sum,2) / 16;
+            std = sqrt(squareMean - meanSquare);
+            if(std < 2){
+                outputfromstage2.at<uchar>(x,y) = 0;
+            }
+        }
+    }
+    return outputfromstage2;
+}
+
 +(UIImage*)extractSkin:(UIImage*)image{
     
     Mat imageMat = [UIImageOpenCV UIImage2CVMat:image];
+    vector<Mat> channels;
+    split(imageMat,channels);
     //Convert the image to YCrCb
     cvtColor(imageMat, imageMat, CV_BGRA2RGB);
     cvtColor(imageMat, imageMat, CV_RGB2YCrCb);
     imageMat = [self colorSegmentation:imageMat];
     imageMat = [self densityRegularization:imageMat];
+    imageMat = [self luminanceRegularization:imageMat luminance:channels[0]];
     return [UIImageOpenCV CVMat2UIImage:imageMat];
 }
 
