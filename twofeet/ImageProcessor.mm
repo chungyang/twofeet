@@ -100,11 +100,11 @@ static int y_offset[] = {-1, -1,  0,  1,  1,  1,  0, -1};
     NSMutableArray* y_erode_candidates = [[NSMutableArray alloc] init];
     NSMutableArray* x_dilate_candidates = [[NSMutableArray alloc] init];
     NSMutableArray* y_dilate_candidates = [[NSMutableArray alloc] init];
-    Mat densityMap(input.rows / 8,input.cols / 8,CV_8UC1);
+    Mat densityMap(input.rows / 4,input.cols / 4,CV_8UC1);
 
     //Calculating density map
-    for(int y = 0; y < input.cols / 8 ; y++){
-        for(int x = 0; x < input.rows / 8; x++){
+    for(int y = 0; y < input.cols / 4 ; y++){
+        for(int x = 0; x < input.rows / 4; x++){
             
             density = 0;
             

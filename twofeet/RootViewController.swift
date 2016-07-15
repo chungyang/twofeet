@@ -161,7 +161,7 @@ class RootViewController: UIViewController, UIImagePickerControllerDelegate,UINa
         
         dispatch_async(queue,{
             let imagebuffer = self.imageFromSampleBuffer(sampleBuffer,RGBFlag: false, CbCrFlag:true)
-            let processedImage = ImageProcessor.extractSkin(imagebuffer)
+            let processedImage = ImageProcessor.extractSkin(imagebuffer) //ImageProcessor.cannyEdge(imagebuffer,threshold1: 40,threshold2: 120,flag: 0);
             dispatch_async(dispatch_get_main_queue(),{
                 self.ImagePicked.image = processedImage
                 self.ImagePicked.transform = CGAffineTransformMakeRotation(CGFloat(M_PI_2));
