@@ -8,11 +8,6 @@
 
 #include "UIImageOpenCV.h"
 
-
-
-
-
-
 @implementation UIImageOpenCV
 
 
@@ -31,7 +26,7 @@
                                                     cvMat.step[0],              // Bytes per row
                                                     colorSpace,                 // Colorspace
                                                     kCGImageAlphaNoneSkipLast |
-                                                    kCGBitmapByteOrderDefault); // Bitmap info flags
+                                                    kCGBitmapByteOrder32Big); // Bitmap info flags
     
     CGContextDrawImage(contextRef, CGRectMake(0, 0, cols, rows), image.CGImage);
     CGContextRelease(contextRef);
@@ -100,6 +95,7 @@
     
     return finalImage;
 }
+
 
 
 @end

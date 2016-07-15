@@ -6,8 +6,6 @@
 //  Copyright © 2016 two feet inc. All rights reserved.
 //
 
-
-
 #import <UIKit/UIKit.h>
 
 @interface UIImageOpenCV:NSObject

@@ -6,15 +6,17 @@
 //  Copyright © 2016 chung yang. All rights reserved.
 //
 
-#import <Foundation/Foundation.h>
 #import "ImageProcessor.h"
 #import "UIImageOpenCV.h"
 
 using namespace cv;
 using namespace std;
 
+
 @implementation ImageProcessor:NSObject
 
+static int x_offset[] = {0,  1,  1,  1,  0, -1, -1, -1};
+static int y_offset[] = {-1, -1,  0,  1,  1,  1,  0, -1};
 
 +(UIImage*)cannyEdge:(UIImage*) image threshold1:(double) th1 threshold2:(double) th2 flag:(int) flag{
     cv::Mat grayImage;
@@ -54,133 +56,148 @@ using namespace std;
     return [UIImageOpenCV CVMat2UIImage:imageMat];
 }
 
--(void)extractSkinTone:(UIImage*) image{
-    //Extract skin tone
-    Mat imageMat;
+
+//**Algorithm of five stages to extract skin (modify chrominance range from Chai and Ngan 1999)***\\
+
+//Stage one
++(Mat)colorSegmentation:(Mat) input{
+    
+    Mat output(input.rows,input.cols,CV_8UC3);
     vector<Mat> channels;
-    vector<Scalar> means;
-    vector<Scalar> std;
-    
-    means.reserve(3);
-    std.reserve(3);
-    
-    imageMat = [UIImageOpenCV UIImage2CVMat:image];
-    cvtColor(imageMat, imageMat, CV_BGRA2RGB);
-    split(imageMat,channels);
-    
-    for(int i = 0; i < 3; i++){
-        meanStdDev(channels[i], means[i], std[i]);
+    int luminance, Cr, Cb;
+    //Split input into Y,Cb,Cr
+    split(input,channels);
+ 
+    for(int i = 0; i < input.rows; i++){
+        for(int j = 0; j < input.cols; j++){
+            luminance = channels[0].at<uchar>(i, j);
+            Cb = channels[1].at<uchar>(i,j);
+            Cr = channels[2].at<uchar>(i,j);
+            //For some reason the skin tone belongs to the range outside the first if statement
+            if((Cr >= 100 && Cr <= 200) && (Cb >= 50 && Cb <= 150)){
+                channels[0].at<uchar>(i, j) = 0;
+                channels[1].at<uchar>(i, j) = 0;
+                channels[2].at<uchar>(i,j) = 0;
+            }
+            else{
+                channels[0].at<uchar>(i, j) = 255;
+                channels[1].at<uchar>(i, j) = 255;
+                channels[2].at<uchar>(i,j) = 255;
+            }
+        }
     }
-
-    *self.componentMean = means[0][0];
-    *(self.componentMean + 1) = means[1][0];
-    *(self.componentMean + 2) = means[2][0];
-    
-    *(self.componentStd) = sqrt(std[0][0]);
-    *(self.componentStd + 1) = sqrt(std[1][0]);
-    *(self.componentStd + 2) = sqrt(std[1][0]);
+    merge(channels, output);
+    cvtColor(output, output, CV_RGB2GRAY);
+    return output;
 }
 
--(void)allocateMemory{
-    self.componentMean = (double*) malloc(sizeof(double)*3);
-    self.componentStd = (double*) malloc(sizeof(double)*3);
-}
+//Stage two
++(Mat)densityRegularization:(Mat)input{
+    
+    
+    int density,nlocalFullDensity;
+    NSMutableArray* x_erode_candidates = [[NSMutableArray alloc] init];
+    NSMutableArray* y_erode_candidates = [[NSMutableArray alloc] init];
+    NSMutableArray* x_dilate_candidates = [[NSMutableArray alloc] init];
+    NSMutableArray* y_dilate_candidates = [[NSMutableArray alloc] init];
+    Mat densityMap(input.rows / 8,input.cols / 8,CV_8UC1);
 
--(void)releaseMemory{
-    free(self.componentStd);
-    free(self.componentMean);
-}
-
--(UIImage*)showsOnlySkinTone:(UIImage*) image{
-    
-    cv::Mat lut(1,256,CV_8UC3);
-    
-    
-    double_t std1 = *(self.componentStd) * 2;
-    double_t std2 = *(self.componentStd + 1 * 2);
-    double_t std3 = *(self.componentStd + 2) * 2;
-    
-    for(int i = 0; i < 256; i++){
-        //All three channels have to be within the tolerance to be considered as having the same color as skin
-        if(fabs(i - *(self.componentMean)) < std1){
-            lut.at<Vec3b>(i)[0] = i;
-        }
-        else{
-            lut.at<Vec3b>(i)[0] = 0;
-        }
-        
-        if(fabs(i - *(self.componentMean + 1)) < std2){
-            lut.at<Vec3b>(i)[1] = i;
-        }
-        else{
-             lut.at<Vec3b>(i)[1] = 0;
-        }
-        
-        if(fabs(i - *(self.componentMean + 2)) < std3){
-            lut.at<Vec3b>(i)[2] = i;
-        }
-        else{
-            lut.at<Vec3b>(i)[2] = 0;
+    //Calculating density map
+    for(int y = 0; y < input.cols / 8 ; y++){
+        for(int x = 0; x < input.rows / 8; x++){
+            
+            density = 0;
+            
+            for(int i = 0; i < 4;i++){
+                for(int j = 0; j < 4; j++){
+                    if(input.at<uchar>(4 * x + i, 4 * y + j) > 0){
+                        density++;
+                    }
+                }
+            }
+            if(density == 16){
+                densityMap.at<uchar>(x,y) = 255;
+            }
+            else if(density == 0){
+                densityMap.at<uchar>(x,y) = 0;
+            }
+            else{
+                densityMap.at<uchar>(x,y) = 125;
+            }
         }
     }
     
-    Mat imageMat;
-    
-    imageMat = [UIImageOpenCV UIImage2CVMat:image];
-    
-    cvtColor(imageMat, imageMat, CV_BGRA2RGB);
    
-    LUT(imageMat,lut,imageMat);
-    cvtColor(imageMat, imageMat, CV_RGB2RGBA);
+    //Dilate(set it to 255) any point of either zero or intermediate density if t
+    //here are more than two full-density points in its local 3x3 neighborhood.
+    for(int x = 0; x < densityMap.rows; x++){
+        for(int y = 0; y < densityMap.cols; y++){
+            
+             //Erode(set it to 0) edge points
+            if(x == 0 || x == densityMap.rows - 1 || y == 0 || y == densityMap.cols - 1){
+                densityMap.at<uchar>(x,y) = 0;
+            }
+            else{
+                nlocalFullDensity = 0;
+                
+                //Erode(set it to 0) a full density point if it has less than 5 full density points in its 3x3 neighborhood
+                if(densityMap.at<uchar>(x,y) == 255){
+                    for(int i = 0; i < 8; i++){
+                        if(densityMap.at<uchar>(x + x_offset[i], y + y_offset[i]) == 255){
+                            nlocalFullDensity ++;
+                        }
+                    }
+                    if(nlocalFullDensity < 5){
+                        NSNumber* location_x = [NSNumber numberWithInt:x];
+                        NSNumber* location_y = [NSNumber numberWithInt:y];
+                        [x_erode_candidates addObject:location_x];
+                        [y_erode_candidates addObject:location_y];
+                    }
+                }
+                //Dilate(set it to 16) a zero or intermideate point it has more than 2 full density points in its 3x3 neighborhhod
+                else{
+                    for(int i = 0; i < 8; i++){
+                        if(densityMap.at<uchar>(x + x_offset[i], y + y_offset[i]) == 255){
+                            nlocalFullDensity ++;
+                        }
+                    }
+                    if(nlocalFullDensity >=3){
+                        NSNumber* location_x = [NSNumber numberWithInt:x];
+                        NSNumber* location_y = [NSNumber numberWithInt:y];
+                        [x_dilate_candidates addObject:location_x];
+                        [y_dilate_candidates addObject:location_y];
+                    }
+                    else{
+                        NSNumber* location_x = [NSNumber numberWithInt:x];
+                        NSNumber* location_y = [NSNumber numberWithInt:y];
+                        [x_erode_candidates addObject:location_x];
+                        [y_erode_candidates addObject:location_y];
+                    }
+                }
+            }
+        }
+    }
+        
+    //Dilate and erode the points from the candidate lists
+    for(int i = 0; i < [x_erode_candidates count]; i++){
+        densityMap.at<uchar>([[x_erode_candidates objectAtIndex:i] intValue],[[y_erode_candidates objectAtIndex:i] intValue]) = 0;
+    }
+    for(int i = 0; i < [x_dilate_candidates count]; i++){
+              densityMap.at<uchar>([[x_dilate_candidates objectAtIndex:i] intValue],[[y_dilate_candidates objectAtIndex:i] intValue]) = 255;
+    }
+    return densityMap;
+}
+
++(UIImage*)extractSkin:(UIImage*)image{
+    
+    Mat imageMat = [UIImageOpenCV UIImage2CVMat:image];
+    //Convert the image to YCrCb
+    cvtColor(imageMat, imageMat, CV_BGRA2RGB);
+    cvtColor(imageMat, imageMat, CV_RGB2YCrCb);
+    imageMat = [self colorSegmentation:imageMat];
+    imageMat = [self densityRegularization:imageMat];
     return [UIImageOpenCV CVMat2UIImage:imageMat];
 }
 
--(UIImage*)rectangleMasking:(UIImage*)image{
-    
-    Mat imageMat;
-    Mat imageMatGray;
-    Mat mask;
-    vector<Mat> channels;
-    vector<vector<cv::Point> > contours;
-    vector<Vec4i> hierarchy;
-    
-    imageMat = [UIImageOpenCV UIImage2CVMatGray:image];
-    
-    mask =  Mat::zeros(imageMat.rows, imageMat.cols, CV_8UC1);
-    mask(cv::Rect(mask.cols / 2, mask.rows / 2 - 50, mask.cols / 2, 100)) = 1;
-    
-    if(imageMat.elemSize() > 1){
-        cvtColor(imageMat, imageMat, CV_BGRA2RGB);
-        split(imageMat,channels);
-        channels[0] = channels[0].mul(mask);
-        channels[1] = channels[1].mul(mask);
-        channels[2] = channels[2].mul(mask);
-        merge(channels, imageMat);
-        cvtColor(imageMat, imageMatGray, CV_RGB2GRAY);
-    }
-    else{
-        imageMatGray = imageMat;
-        imageMatGray = imageMatGray.mul(mask);
-    }
-    
-    GaussianBlur(imageMatGray, imageMatGray, cv::Size(5,5), 0);
-    
-    cvtColor(imageMat, imageMat, CV_GRAY2RGB);
-    
-    Mat edges;
-    Canny(imageMatGray, edges, 45, 130);
-    findContours(edges, contours, hierarchy, CV_RETR_CCOMP, CV_CHAIN_APPROX_NONE, cv::Point(0, 0) );
-    
-    Mat drawing = Mat::zeros( edges.size(), CV_8UC3);
-    Scalar color = Scalar(255,255,255);
-    
-    for(int i = 0; i < contours.size(); i++){
-        if(contours[i].size() > 100){
-            drawContours( drawing, contours, i, color, 1, 8, hierarchy, 0, cv::Point() );
-        }
-    }
-
-    return [UIImageOpenCV CVMat2UIImage:drawing];
-}
 
 @end

@@ -7,7 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		0A4F83D81D1E43AD00B76DF6 /* libsqlite3.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 0A4F83D71D1E43AD00B76DF6 /* libsqlite3.tbd */; };
 		0A4F883B1CE5A9800033B9A6 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A4F883A1CE5A9800033B9A6 /* AppDelegate.swift */; };
 		0A4F883D1CE5A9800033B9A6 /* RootViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A4F883C1CE5A9800033B9A6 /* RootViewController.swift */; };
 		0A4F88441CE5A9800033B9A6 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 0A4F88421CE5A9800033B9A6 /* Main.storyboard */; };
@@ -43,7 +42,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				0A4F83D81D1E43AD00B76DF6 /* libsqlite3.tbd in Frameworks */,
 				0A4F88571CE5ABDE0033B9A6 /* opencv2.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -169,11 +167,11 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				0A4F885B1CE5B50C0033B9A6 /* UIImageOpenCV.mm in Sources */,
 				0A4F88611CF1524E0033B9A6 /* MeasurementViewController.swift in Sources */,
 				0A4F883D1CE5A9800033B9A6 /* RootViewController.swift in Sources */,
-				0A4F885E1CE6879C0033B9A6 /* ImageProcessor.mm in Sources */,
 				0A4F883B1CE5A9800033B9A6 /* AppDelegate.swift in Sources */,
+				0A4F885E1CE6879C0033B9A6 /* ImageProcessor.mm in Sources */,
+				0A4F885B1CE5B50C0033B9A6 /* UIImageOpenCV.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
