@@ -6,6 +6,18 @@
 //  Copyright © 2016 chung yang. All rights reserved.
 //
 
+//There is a orientation difference between OpenCV and Quertz 2D. So in the image processing with OpenCV, rows corresponds to x-axis and columns corresponds to y-axis. After the image is processed, the processed image is rotated 90 degree so it aligns with the image aquired from the camera. Why is the orientation changed in OpenCV is currently unknown.
+
+//        Quertz 2D                 OpenCV
+//
+//      x<---------                 ------------>y
+//                |                 |
+//                |                 |
+//                |                 |
+//                |                 |
+//                ∨                 ∨
+//                y                 x
+
 #import "ImageProcessor.h"
 #import "UIImageOpenCV.h"
 
@@ -19,7 +31,9 @@ static int x_offset[] = {0,  1,  1,  1,  0, -1, -1, -1};
 static int y_offset[] = {-1, -1,  0,  1,  1,  1,  0, -1};
 
 +(UIImage*)cannyEdge:(UIImage*) image threshold1:(double) th1 threshold2:(double) th2 flag:(int) flag{
+    
     cv::Mat grayImage;
+    
     if(flag == 0){
         grayImage = [UIImageOpenCV UIImage2CVMat:image];
     }
@@ -31,9 +45,11 @@ static int y_offset[] = {-1, -1,  0,  1,  1,  1,  0, -1};
     if(grayImage.elemSize() > 1){
         cv::cvtColor(grayImage,grayImage,CV_BGRA2GRAY);
     }
+    
     Mat edges;
     Canny(grayImage, edges, th1, th2);
     UIImage *edgeImage = [UIImageOpenCV  CVMat2UIImage:edges];  //Convert the processed Mat back to UIImage
+    
     return edgeImage;
 }
 
@@ -48,11 +64,13 @@ static int y_offset[] = {-1, -1,  0,  1,  1,  1,  0, -1};
     vector<cv::Vec3f> circles;
     HoughCircles(grayImage, circles, CV_HOUGH_GRADIENT,1,5,70,80,20,150);
     printf("%lu\n",circles.size());
+    
     for(size_t i = 0; i < circles.size(); i++){
         cv::Point center(cvRound(circles[i][0]),cvRound(circles[i][1]));
         int radius = cvRound(circles[1][2]);
         circle(imageMat,center,radius, cvScalar(0,0,255),2,8,0);
     }
+    
     return [UIImageOpenCV CVMat2UIImage:imageMat];
 }
 
@@ -70,9 +88,11 @@ static int y_offset[] = {-1, -1,  0,  1,  1,  1,  0, -1};
  
     for(int i = 0; i < input.rows; i++){
         for(int j = 0; j < input.cols; j++){
+            
             luminance = channels[0].at<uchar>(i, j);
             Cb = channels[1].at<uchar>(i,j);
             Cr = channels[2].at<uchar>(i,j);
+            
             //For some reason the skin tone belongs to the range outside the first if statement
             if((Cr >= 100 && Cr <= 210) && (Cb >= 40 && Cb <= 150)){
                 channels[0].at<uchar>(i, j) = 0;
@@ -84,10 +104,13 @@ static int y_offset[] = {-1, -1,  0,  1,  1,  1,  0, -1};
                 channels[1].at<uchar>(i, j) = 255;
                 channels[2].at<uchar>(i,j) = 255;
             }
+            
         }
     }
+    
     merge(channels, output);
     cvtColor(output, output, CV_RGB2GRAY);
+    
     return output;
 }
 
@@ -95,10 +118,12 @@ static int y_offset[] = {-1, -1,  0,  1,  1,  1,  0, -1};
 +(Mat)densityRegularization:(Mat)input{
     
     int density,nlocalFullDensity;
+    
     NSMutableArray* x_erode_candidates = [[NSMutableArray alloc] init];
     NSMutableArray* y_erode_candidates = [[NSMutableArray alloc] init];
     NSMutableArray* x_dilate_candidates = [[NSMutableArray alloc] init];
     NSMutableArray* y_dilate_candidates = [[NSMutableArray alloc] init];
+
     Mat densityMap(input.rows / 4,input.cols / 4,CV_8UC1);
 
     //Calculating density map
@@ -109,11 +134,14 @@ static int y_offset[] = {-1, -1,  0,  1,  1,  1,  0, -1};
             
             for(int i = 0; i < 4;i++){
                 for(int j = 0; j < 4; j++){
+                    
                     if(input.at<uchar>(4 * x + i, 4 * y + j) > 0){
                         density++;
                     }
+                    
                 }
             }
+            
             if(density == 16){
                 densityMap.at<uchar>(x,y) = 255;
             }
@@ -123,16 +151,15 @@ static int y_offset[] = {-1, -1,  0,  1,  1,  1,  0, -1};
             else{
                 densityMap.at<uchar>(x,y) = 125;
             }
+            
         }
     }
-    
-   
     //Dilate(set it to 255) any point of either zero or intermediate density if t
     //here are more than two full-density points in its local 3x3 neighborhood.
     for(int x = 0; x < densityMap.rows; x++){
         for(int y = 0; y < densityMap.cols; y++){
             
-             //Erode(set it to 0) edge points
+            //Erode(set it to 0) edge points
             if(x == 0 || x == densityMap.rows - 1 || y == 0 || y == densityMap.cols - 1){
                 densityMap.at<uchar>(x,y) = 0;
             }
@@ -141,25 +168,32 @@ static int y_offset[] = {-1, -1,  0,  1,  1,  1,  0, -1};
                 
                 //Erode(set it to 0) a full density point if it has less than 5 full density points in its 3x3 neighborhood
                 if(densityMap.at<uchar>(x,y) == 255){
+                    
                     for(int i = 0; i < 8; i++){
+                        
                         if(densityMap.at<uchar>(x + x_offset[i], y + y_offset[i]) == 255){
                             nlocalFullDensity ++;
                         }
+                        
                     }
+                    
                     if(nlocalFullDensity < 5){
                         NSNumber* location_x = [NSNumber numberWithInt:x];
                         NSNumber* location_y = [NSNumber numberWithInt:y];
                         [x_erode_candidates addObject:location_x];
                         [y_erode_candidates addObject:location_y];
                     }
+                    
                 }
                 //Dilate(set it to 16) a zero or intermideate point it has more than 2 full density points in its 3x3 neighborhhod
                 else{
+                    
                     for(int i = 0; i < 8; i++){
                         if(densityMap.at<uchar>(x + x_offset[i], y + y_offset[i]) == 255){
                             nlocalFullDensity ++;
                         }
                     }
+                    
                     if(nlocalFullDensity >=3){
                         NSNumber* location_x = [NSNumber numberWithInt:x];
                         NSNumber* location_y = [NSNumber numberWithInt:y];
@@ -172,18 +206,21 @@ static int y_offset[] = {-1, -1,  0,  1,  1,  1,  0, -1};
                         [x_erode_candidates addObject:location_x];
                         [y_erode_candidates addObject:location_y];
                     }
+                    
                 }
             }
         }
     }
-        
+    
     //Dilate and erode the points from the candidate lists
     for(int i = 0; i < [x_erode_candidates count]; i++){
         densityMap.at<uchar>([[x_erode_candidates objectAtIndex:i] intValue],[[y_erode_candidates objectAtIndex:i] intValue]) = 0;
     }
+    
     for(int i = 0; i < [x_dilate_candidates count]; i++){
-              densityMap.at<uchar>([[x_dilate_candidates objectAtIndex:i] intValue],[[y_dilate_candidates objectAtIndex:i] intValue]) = 255;
+        densityMap.at<uchar>([[x_dilate_candidates objectAtIndex:i] intValue],[[y_dilate_candidates objectAtIndex:i] intValue]) = 255;
     }
+    
     return densityMap;
 }
 
@@ -202,15 +239,103 @@ static int y_offset[] = {-1, -1,  0,  1,  1,  1,  0, -1};
                     sum += luminance.at<uchar>(4 * x + i, 4 * y + j);
                 }
             }
+            
             meanSquare = pow(sum / 16, 2);
             squareMean = pow(sum,2) / 16;
             std = sqrt(squareMean - meanSquare);
+            
             if(std < 2){
                 outputfromstage2.at<uchar>(x,y) = 0;
             }
+            
         }
     }
+    
     return outputfromstage2;
+}
+
+//Stage 4
++(Mat)geometricCorrection:(Mat)outputfromstage3{
+    
+    //The paper suggests filtering out the noise using similar step from stage 2
+    int nlocalFullDensity;
+    bool detectedPixelsExist;
+    
+    NSMutableArray* x_erode_candidates = [[NSMutableArray alloc] init];
+    NSMutableArray* y_erode_candidates = [[NSMutableArray alloc] init];
+    NSMutableArray* x_dilate_candidates = [[NSMutableArray alloc] init];
+    NSMutableArray* y_dilate_candidates = [[NSMutableArray alloc] init];
+    NSMutableArray* rows2scan = [[NSMutableArray alloc] init];
+    
+    for(int x = 0; x < outputfromstage3.rows; x++){
+        
+        detectedPixelsExist = false;
+        
+        for(int y = 0; y < outputfromstage3.cols; y++){
+        
+            if(!(x == 0 || x == outputfromstage3.rows - 1 || y == 0 || y == outputfromstage3.cols - 1)){
+                
+                nlocalFullDensity = 0;
+                
+                if(outputfromstage3.at<uchar>(x,y) == 255){
+                    
+                    if(!detectedPixelsExist){
+                        detectedPixelsExist = true;
+                        NSNumber* row_number = [NSNumber numberWithInteger:x];
+                        [rows2scan addObject:row_number];
+                    }
+                    
+                    for(int i = 0; i < 8; i++){
+                        
+                        if(outputfromstage3.at<uchar>(x + x_offset[i], y + y_offset[i]) == 255){
+                            nlocalFullDensity ++;
+                        }
+                        
+                    }
+                    
+                    if(nlocalFullDensity < 3){
+                        NSNumber* location_x = [NSNumber numberWithInt:x];
+                        NSNumber* location_y = [NSNumber numberWithInt:y];
+                        [x_erode_candidates addObject:location_x];
+                        [y_erode_candidates addObject:location_y];
+                    }
+                    
+                }
+                else{
+                    
+                    for(int i = 0; i < 8; i++){
+                        
+                        if(outputfromstage3.at<uchar>(x + x_offset[i], y + y_offset[i]) == 255){
+                            nlocalFullDensity ++;
+                        }
+                        
+                    }
+                    
+                    if(nlocalFullDensity >= 5){
+                        NSNumber* location_x = [NSNumber numberWithInt:x];
+                        NSNumber* location_y = [NSNumber numberWithInt:y];
+                        [x_dilate_candidates addObject:location_x];
+                        [y_dilate_candidates addObject:location_y];
+                    }
+                }
+
+            }
+        }
+    }
+    //Dilate and erode the points from the candidate lists
+    for(int i = 0; i < [x_erode_candidates count]; i++){
+        outputfromstage3.at<uchar>([[x_erode_candidates objectAtIndex:i] intValue],[[y_erode_candidates objectAtIndex:i] intValue]) = 0;
+    }
+    for(int i = 0; i < [x_dilate_candidates count]; i++){
+        outputfromstage3.at<uchar>([[x_dilate_candidates objectAtIndex:i] intValue],[[y_dilate_candidates objectAtIndex:i] intValue]) = 255;
+    }
+    
+    for(int i = 0; i < [rows2scan count]; i++){
+        
+    }
+    //Scan along the rows and see if a group of detected pixels has a count above 5. The reason is that if the foot is correctly detected, because of its shape, it should see more connected pixels horizontally (Why not vertically? see the note on orientaion at the top)
+    
+    return outputfromstage3;
 }
 
 +(UIImage*)extractSkin:(UIImage*)image{
@@ -218,12 +343,15 @@ static int y_offset[] = {-1, -1,  0,  1,  1,  1,  0, -1};
     Mat imageMat = [UIImageOpenCV UIImage2CVMat:image];
     vector<Mat> channels;
     split(imageMat,channels);
+    
     //Convert the image to YCrCb
     cvtColor(imageMat, imageMat, CV_BGRA2RGB);
     cvtColor(imageMat, imageMat, CV_RGB2YCrCb);
     imageMat = [self colorSegmentation:imageMat];
     imageMat = [self densityRegularization:imageMat];
     imageMat = [self luminanceRegularization:imageMat luminance:channels[0]];
+    imageMat = [self geometricCorrection:imageMat];
+    
     return [UIImageOpenCV CVMat2UIImage:imageMat];
 }
 
