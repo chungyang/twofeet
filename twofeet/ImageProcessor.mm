@@ -258,14 +258,14 @@ static int y_offset[] = {-1, -1,  0,  1,  1,  1,  0, -1};
 +(Mat)geometricCorrection:(Mat)outputfromstage3{
     
     //The paper suggests filtering out the noise using similar step from stage 2
-    int nlocalFullDensity;
+    int nlocalFullDensity,counter = 0;
     bool detectedPixelsExist;
     
     NSMutableArray* x_erode_candidates = [[NSMutableArray alloc] init];
     NSMutableArray* y_erode_candidates = [[NSMutableArray alloc] init];
     NSMutableArray* x_dilate_candidates = [[NSMutableArray alloc] init];
     NSMutableArray* y_dilate_candidates = [[NSMutableArray alloc] init];
-    NSMutableArray* rows2scan = [[NSMutableArray alloc] init];
+    NSMutableArray* firstDetectedPixel = [[NSMutableArray alloc] init];
     
     for(int x = 0; x < outputfromstage3.rows; x++){
         
@@ -282,7 +282,9 @@ static int y_offset[] = {-1, -1,  0,  1,  1,  1,  0, -1};
                     if(!detectedPixelsExist){
                         detectedPixelsExist = true;
                         NSNumber* row_number = [NSNumber numberWithInteger:x];
-                        [rows2scan addObject:row_number];
+                        NSNumber* col_number = [NSNumber numberWithInteger:y];
+                        [firstDetectedPixel addObject:row_number];
+                        [firstDetectedPixel addObject:col_number];
                     }
                     
                     for(int i = 0; i < 8; i++){
@@ -330,10 +332,35 @@ static int y_offset[] = {-1, -1,  0,  1,  1,  1,  0, -1};
         outputfromstage3.at<uchar>([[x_dilate_candidates objectAtIndex:i] intValue],[[y_dilate_candidates objectAtIndex:i] intValue]) = 255;
     }
     
-    for(int i = 0; i < [rows2scan count]; i++){
+    //Scanning the rows and erode groups of points that don't have a count above 5
+    for(int i = 0; i < [firstDetectedPixel count] / 2; i++){
         
+        int rowScanning = [[firstDetectedPixel objectAtIndex:i] intValue];
+        int coln = [[firstDetectedPixel objectAtIndex:i+1] intValue] - 1;  //subtracted by one to compensate for the first increment
+        
+        while(true){
+            
+            if(outputfromstage3.at<uchar>(rowScanning,coln + 1) == 255){
+                counter++;
+                coln++;
+            }
+            else{
+                
+                if(counter < 6){
+                    for(int j = 0; j < counter; j++){
+                        outputfromstage3.at<uchar>(rowScanning,coln - j) = 0;
+                    }
+                }
+                
+                counter = 0;
+                coln++;
+                
+                if(coln > outputfromstage3.cols - 1){
+                    break;
+                }
+            }
+        }
     }
-    //Scan along the rows and see if a group of detected pixels has a count above 5. The reason is that if the foot is correctly detected, because of its shape, it should see more connected pixels horizontally (Why not vertically? see the note on orientaion at the top)
     
     return outputfromstage3;
 }
