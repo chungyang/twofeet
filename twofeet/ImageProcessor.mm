@@ -63,7 +63,6 @@ static int y_offset[] = {-1, -1,  0,  1,  1,  1,  0, -1};
 
     vector<cv::Vec3f> circles;
     HoughCircles(grayImage, circles, CV_HOUGH_GRADIENT,1,5,70,80,20,150);
-    printf("%lu\n",circles.size());
     
     for(size_t i = 0; i < circles.size(); i++){
         cv::Point center(cvRound(circles[i][0]),cvRound(circles[i][1]));
@@ -362,7 +361,70 @@ static int y_offset[] = {-1, -1,  0,  1,  1,  1,  0, -1};
         }
     }
     
+    //Maybe it can fix memory leaks
+    x_erode_candidates = nil;
+    x_dilate_candidates = nil;
+    y_erode_candidates = nil;
+    y_dilate_candidates = nil;
+    firstDetectedPixel = nil;
+    
     return outputfromstage3;
+}
+
+//Stage 5
++(Mat)contourExtraction:(Mat)outputfromstage4 segementedResult:(Mat)segementedResult{
+    
+    Mat edges,mask,finalResult;
+    Mat detectedRegions = Mat::zeros(outputfromstage4.rows * 4, outputfromstage4.cols * 4, CV_8UC1);
+    
+    Canny(outputfromstage4,edges,1, 254);  //Note the threshold here doesn't really matter cause we are extracting edges from a binary image
+    vector<vector<cv::Point>> contours;
+    vector<Vec4i> hierarchy;
+    
+    findContours(edges, contours, hierarchy, CV_RETR_TREE, CV_CHAIN_APPROX_NONE);
+    
+    for(int i = 0; i < contours.size(); i++){
+        
+        vector<cv::Point> points = contours[i];
+        int topRight_x = detectedRegions.rows / 4,topRight_y = detectedRegions.cols / 4,botLeft_x = 1,botLeft_y = 1;
+        
+        for(int j = 0; j < points.size(); j++){
+            
+            //Points extracted by findContours are rotated for some reason
+            int x = points[j].y;
+            int y = points[j].x;
+            
+            if(x < topRight_x){
+                topRight_x = x;
+            }
+            if(x > botLeft_x){
+                botLeft_x = x;
+            }
+            if(y > botLeft_y){
+                botLeft_y = y;
+            }
+            if(y < topRight_y){
+                topRight_y = y;
+            }
+        }
+        
+        //Transform the points to the ones on a original resolution Mat
+        
+        for(int x = 0; x < abs(botLeft_x - topRight_x); x++){
+            for(int y = 0; y < abs(botLeft_y - topRight_y); y++){
+
+                detectedRegions.at<uchar>(topRight_x + x ,topRight_y + y) = 1;
+                
+            }
+        }
+    }
+    
+    cv::Size size(segementedResult.cols,segementedResult.rows);
+    resize(outputfromstage4, outputfromstage4, size);
+    
+    finalResult = segementedResult.mul(outputfromstage4);
+    
+    return finalResult;
 }
 
 +(UIImage*)extractSkin:(UIImage*)image{
@@ -375,10 +437,11 @@ static int y_offset[] = {-1, -1,  0,  1,  1,  1,  0, -1};
     cvtColor(imageMat, imageMat, CV_BGRA2RGB);
     cvtColor(imageMat, imageMat, CV_RGB2YCrCb);
     imageMat = [self colorSegmentation:imageMat];
+    Mat segmentedResult = imageMat.clone();
     imageMat = [self densityRegularization:imageMat];
     imageMat = [self luminanceRegularization:imageMat luminance:channels[0]];
     imageMat = [self geometricCorrection:imageMat];
-    
+    imageMat = [self contourExtraction:imageMat segementedResult:segmentedResult];
     return [UIImageOpenCV CVMat2UIImage:imageMat];
 }
 
